@@ -11,3 +11,6 @@ brake:刹车
 ## 相关文档
 - PIXI：https://pixijs.com/
 - GSAP：https://greensock.com/docs/v3/GSAP
+
+## 预览
+![preview](./brake_preview.gif)
