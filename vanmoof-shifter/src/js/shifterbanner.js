@@ -12,11 +12,15 @@ class ShifterBanner {
     this.stage = this.app.stage
 
     this.loader = new PIXI.Loader();
+    this.loader.add('btn.png', './images/btn.png')
+    this.loader.add('btn_circle.png', './images/btn_circle.png')
     this.loader.add('shifter_bike.jpg', './images/shifter_bike.jpg')
     this.loader.add('shifter_spokes.png', './images/shifter_spokes.png')
     this.loader.add('shifter_uncovered.png', './images/shifter_uncovered.png')
     this.loader.add('shifter_covered.png', './images/shifter_covered.png')
     this.loader.add('shifter_clear.png', './images/shifter_clear.png')
+    this.loader.add('shifter_bike.png', './images/shifter_bike.png')
+    this.loader.add('shifter_wheel.png', './images/shifter_wheel.png')
 
 
     this.loader.load()
@@ -29,8 +33,50 @@ class ShifterBanner {
     return new PIXI.Sprite(this.loader.resources[name].texture)
   }
 
+  createBtn() {
+    const btnContainer = new PIXI.Container()
+    const btnImage = this.resource('btn.png')
+    const btnCircleImage = this.resource('btn_circle.png')
+
+    btnImage.pivot.x = btnImage.pivot.y = btnImage.width/2
+    btnCircleImage.pivot.x = btnCircleImage.pivot.y = btnCircleImage.width/2
+    btnContainer.addChild(btnImage)
+    btnContainer.addChild(btnCircleImage)
+
+    return btnContainer
+
+  }
+
+  createWholeBike() {
+    const wholeContainer = new PIXI.Container()
+    const shifterBike = this.resource('shifter_bike.png')
+    const shifterWheel = this.resource('shifter_wheel.png')
+   
+    wholeContainer.addChild(shifterWheel)
+    wholeContainer.addChild(shifterBike)
+    // shifterBike.scale.x = shifterBike.scale.y = 0.6
+    // shifterWheel.scale.x = shifterWheel.scale.y = 0.6
+
+    
+    // shifterWheel.x = window.innerWidth - shifterWheel.width
+    // shifterWheel.y = window.innerHeight - shifterWheel.height
+    // shifterBike.x = shifterWheel.x = shifterWheel.width/2
+    // shifterBike.y = shifterWheel.y
+
+    // shifterBike.x = 0
+
+    wholeContainer.x = window.innerWidth - shifterWheel.width/2
+
+    wholeContainer.y = window.innerHeight - shifterWheel.height
+
+
+
+    return wholeContainer
+  }
+
   show () {
     const shifterContainer = new PIXI.Container()
+    this.stage.addChild(shifterContainer)
 
     const shifterSpokes = this.resource('shifter_spokes.png')
     shifterSpokes.scale.x = shifterSpokes.scale.y = 0.6
@@ -87,10 +133,19 @@ class ShifterBanner {
     shifterContainer.addChild(shifterUncovered)
     // shifterContainer.addChild(shifterSpokes2)
 
-
     shifterContainer.addChild(clearDraw)
 
-    this.stage.addChild(shifterContainer)
+    const btnContainer = this.createBtn()
+    btnContainer.x = btnContainer.y = 400
+    shifterContainer.addChild(btnContainer)
+
+
+    const wholeContainer = this.createWholeBike()
+    // wholeContainer.x = window.innerWidth - wholeContainer.width
+    // wholeContainer.y = window.innerHeight - wholeContainer.height
+
+    shifterContainer.addChild(wholeContainer)
+
 
     console.log(maskX, maskY, this,maskDraw.wdith);
 
