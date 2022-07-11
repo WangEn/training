@@ -36,8 +36,8 @@ class ShifterBanner {
     shifterSpokes.scale.x = shifterSpokes.scale.y = 0.6
     shifterSpokes.alpha = 0.3
 
-    const shifterSpokes2 = this.resource('shifter_spokes.png')
-    shifterSpokes2.scale.x = shifterSpokes2.scale.y = 0.6
+    // const shifterSpokes2 = this.resource('shifter_spokes.png')
+    // shifterSpokes2.scale.x = shifterSpokes2.scale.y = 0.6
 
 
     const shifterUncovered = this.resource('shifter_uncovered.png')
@@ -65,18 +65,43 @@ class ShifterBanner {
     clearDraw.width = clearDraw.height = 200
     clearDraw.pivot.x = clearDraw.pivot.y = clearDraw.width / 2
 
-    shifterSpokes2.mask = clearDraw
+    const maskDraw = new PIXI.Graphics()
+    maskDraw.beginFill(0xffffff, 1)
+    console.log(shifterContainer.width, shifterContainer.height, this.app.view.width);
+    const {width: maskX, height: maskY} = this.app.view
+    maskDraw.drawRect(0, 0,maskX, maskY)
+    maskDraw.endFill()
+
+
+    // shifterSpokes2.mask = clearDraw
+    maskDraw.mask = clearDraw
     shifterUncovered.mask = clearDraw
     // shifterSpokes.mask = clearDraw
 
-    shifterSpokes.interactive = true
-    shifterSpokes.buttonMode = true
-    shifterSpokes.on('mousemove', (event) => {
+
+    shifterContainer.addChild(shifterSpokes)
+
+    shifterContainer.addChild(maskDraw)
+    shifterContainer.addChild(shifterCovered)
+
+    shifterContainer.addChild(shifterUncovered)
+    // shifterContainer.addChild(shifterSpokes2)
+
+
+    shifterContainer.addChild(clearDraw)
+
+    this.stage.addChild(shifterContainer)
+
+    console.log(maskX, maskY, this,maskDraw.wdith);
+
+    shifterUncovered.interactive = true
+    shifterUncovered.buttonMode = true
+    shifterUncovered.on('mousemove', (event) => {
       const { x, y } = event.data.global
-      console.log(x, y);
+      // console.log(x, y);
       clearDraw.x = x
       clearDraw.y = y
-      uncoverFill.alpha=0
+      // uncoverFill.alpha=0
       // clearDraw.mask = shifterUncovered
       // shifterSpokes.mask = clearDraw
       // mask is  to alpha=0 where is mask.
@@ -87,14 +112,6 @@ class ShifterBanner {
       // shifterContainer.mask = clearDraw
     })
 
-    shifterContainer.addChild(shifterSpokes)
-    shifterContainer.addChild(shifterCovered)
-    shifterContainer.addChild(shifterUncovered)
-    shifterContainer.addChild(shifterSpokes2)
-
-    shifterContainer.addChild(clearDraw)
-
-    this.stage.addChild(shifterContainer)
 
     function resize () {
       // shifterBike.x = window.innerWidth - shifterBike.width
