@@ -4,6 +4,7 @@ class ShifterBanner {
       width: window.innerWidth,
       height: window.innerHeight,
       backgroundColor: 0xffffff,
+      antialias: true,
       resizeTo: window
     })
 
@@ -33,31 +34,75 @@ class ShifterBanner {
     return new PIXI.Sprite(this.loader.resources[name].texture)
   }
 
-  createBtn() {
+  createBtn () {
     const btnContainer = new PIXI.Container()
-    const btnImage = this.resource('btn.png')
-    const btnCircleImage = this.resource('btn_circle.png')
+    // const btnImage = this.resource('btn.png')
+    // const btnCircleImage = this.resource('btn_circle.png')
 
-    btnImage.pivot.x = btnImage.pivot.y = btnImage.width/2
-    btnCircleImage.pivot.x = btnCircleImage.pivot.y = btnCircleImage.width/2
-    btnContainer.addChild(btnImage)
-    btnContainer.addChild(btnCircleImage)
+    // btnImage.pivot.x = btnImage.pivot.y = btnImage.width / 2
+    // btnCircleImage.pivot.x = btnCircleImage.pivot.y = btnCircleImage.width / 2
+    // btnContainer.addChild(btnImage)
+    // btnContainer.addChild(btnCircleImage)
+
+    const btnCircle = new PIXI.Graphics()
+    btnCircle.beginFill(0xffe720)
+    btnCircle.drawCircle(0, 0, 60)
+    btnCircle.endFill()
+    btnContainer.addChild(btnCircle)
+
+
+    const btnCircleEdge = new PIXI.Graphics()
+    btnCircleEdge.lineStyle(2, 0xffe720)
+    btnCircleEdge.drawCircle(0, 0, 76)
+    btnCircleEdge.endFill()
+    btnContainer.addChild(btnCircleEdge)
+
+    const btnCircleEdge2 = new PIXI.Graphics()
+    btnCircleEdge2.lineStyle(2, 0xffe720)
+    btnCircleEdge2.drawCircle(0, 0, 76)
+    btnCircleEdge2.endFill()
+    btnCircleEdge2.scale.x = btnCircleEdge2.scale.y = 0.8
+    btnCircleEdge2.alpha = 0
+    btnContainer.addChild(btnCircleEdge2)
+
+
+    const btnText = new PIXI.Text('click & hold', {
+      width: 80,
+      fontSize: 28,
+      wordWrap: true
+    })
+    btnText.anchor.x = 0
+    btnText.anchor.y = 0
+    btnText.x = -36
+    btnText.y = -30
+
+    btnText.pivot.x = btnText.pivot.y = 0
+    btnContainer.addChild(btnText)
+
+    gsap.to(btnCircle.scale, {x: 0.8, y: 0.8, duration: 0.3, repeat: -1, repeatDelay: 2})
+    gsap.to(btnCircleEdge2, {alpha: 1, duration: 0.3, repeat: -1, repeatDelay: 2})
+
+    gsap.to(btnCircle.scale, {x: 1, y: 1, duration: 0.3, repeat: -1, repeatDelay: 2, delay: 0.3})
+
+    gsap.to(btnCircleEdge2.scale, {x: 1.2, y: 1.2, duration: 0.6, repeat: -1, repeatDelay: 2, delay: 0.3})
+    gsap.to(btnCircleEdge2, {alpha: 0, duration: 0.6, repeat: -1, repeatDelay: 2, delay: 0.3})
+
 
     return btnContainer
 
   }
 
-  createWholeBike() {
+  createWholeBike () {
     const wholeContainer = new PIXI.Container()
     const shifterBike = this.resource('shifter_bike.png')
     const shifterWheel = this.resource('shifter_wheel.png')
-   
+
     wholeContainer.addChild(shifterWheel)
     wholeContainer.addChild(shifterBike)
     // shifterBike.scale.x = shifterBike.scale.y = 0.6
     // shifterWheel.scale.x = shifterWheel.scale.y = 0.6
 
-    
+
     // shifterWheel.x = window.innerWidth - shifterWheel.width
     // shifterWheel.y = window.innerHeight - shifterWheel.height
     // shifterBike.x = shifterWheel.x = shifterWheel.width/2
@@ -65,7 +110,7 @@ class ShifterBanner {
 
     // shifterBike.x = 0
 
-    wholeContainer.x = window.innerWidth - shifterWheel.width/2
+    wholeContainer.x = window.innerWidth - shifterWheel.width / 2
 
     wholeContainer.y = window.innerHeight - shifterWheel.height
 
@@ -84,6 +129,8 @@ class ShifterBanner {
 
     // const shifterSpokes2 = this.resource('shifter_spokes.png')
     // shifterSpokes2.scale.x = shifterSpokes2.scale.y = 0.6
+    // shifterSpokes2.alpha = 0.3
+    // shifterContainer.addChild(shifterSpokes2)
 
 
     const shifterUncovered = this.resource('shifter_uncovered.png')
@@ -111,61 +158,63 @@ class ShifterBanner {
     clearDraw.width = clearDraw.height = 200
     clearDraw.pivot.x = clearDraw.pivot.y = clearDraw.width / 2
 
-    const maskDraw = new PIXI.Graphics()
-    maskDraw.beginFill(0xffffff, 1)
-    console.log(shifterContainer.width, shifterContainer.height, this.app.view.width);
-    const {width: maskX, height: maskY} = this.app.view
-    maskDraw.drawRect(0, 0,maskX, maskY)
-    maskDraw.endFill()
-
-
-    // shifterSpokes2.mask = clearDraw
-    maskDraw.mask = clearDraw
-    shifterUncovered.mask = clearDraw
-    // shifterSpokes.mask = clearDraw
-
 
     shifterContainer.addChild(shifterSpokes)
 
-    shifterContainer.addChild(maskDraw)
+
+    const maskDraw = new PIXI.Graphics()
+    maskDraw.beginFill(0xffffff, 1)
+    maskDraw.drawRect(0, 0, shifterCovered.width, shifterCovered.height)
+    maskDraw.endFill()
+    
+    // shifterContainer.addChild(maskDraw)
     shifterContainer.addChild(shifterCovered)
+   
 
     shifterContainer.addChild(shifterUncovered)
+
     // shifterContainer.addChild(shifterSpokes2)
 
-    shifterContainer.addChild(clearDraw)
+    // shifterContainer.addChild(clearDraw)
+
+    
+
+    // mask 遮罩层
+    const radius = 200;
+
+    // The blur amount
+    const blurSize = 32;
+    const circle = new PIXI.Graphics()
+      .beginFill(0xFF0000)
+      .drawCircle(radius + blurSize, radius + blurSize, radius)
+      .endFill();
+    circle.filters = [new PIXI.filters.BlurFilter(blurSize)];
+
+    const bounds = new PIXI.Rectangle(0, 0, (radius + blurSize) * 2, (radius + blurSize) * 2);
+    const texture = this.app.renderer.generateTexture(circle, PIXI.SCALE_MODES.NEAREST, 1, bounds);
+    const focus = new PIXI.Sprite(texture);
+
+    // this.stage.addChild(focus);
+    shifterContainer.addChild(focus);
+    shifterUncovered.mask = focus;
+    // maskDraw.mask = focus;
+
+
+
+    this.stage.interactive = true;
+    this.stage.on('mousemove', pointerMove);
+
+    function pointerMove (event) {
+      focus.position.x = event.data.global.x - focus.width / 2;
+      focus.position.y = event.data.global.y - focus.height / 2;
+      // focus.blendMode = PIXI.BLEND_MODES['SRC_IN']
+
+    }
 
     const btnContainer = this.createBtn()
     btnContainer.x = btnContainer.y = 400
     shifterContainer.addChild(btnContainer)
-
-
-    const wholeContainer = this.createWholeBike()
-    // wholeContainer.x = window.innerWidth - wholeContainer.width
-    // wholeContainer.y = window.innerHeight - wholeContainer.height
-
-    shifterContainer.addChild(wholeContainer)
-
-
-    console.log(maskX, maskY, this,maskDraw.wdith);
-
-    shifterUncovered.interactive = true
-    shifterUncovered.buttonMode = true
-    shifterUncovered.on('mousemove', (event) => {
-      const { x, y } = event.data.global
-      // console.log(x, y);
-      clearDraw.x = x
-      clearDraw.y = y
-      // uncoverFill.alpha=0
-      // clearDraw.mask = shifterUncovered
-      // shifterSpokes.mask = clearDraw
-      // mask is  to alpha=0 where is mask.
-
-      // fillDraw.mask = clearDraw
-      // shifterCovered.mask = clearDraw
-      // event.backgroundAlpha = 0.2
-      // shifterContainer.mask = clearDraw
-    })
+    
 
 
     function resize () {
