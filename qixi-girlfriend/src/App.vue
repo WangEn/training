@@ -2,12 +2,12 @@
   <div class="container">
     <div class="express">
       <!-- <div class="heart-box"></div> -->
-      <h1>{{ title }}<span>💕</span></h1>
-      <div class="wink">
+      <!-- <h1>{{ title }}<span>💕</span></h1> -->
+      <!-- <div class="wink">
         <img src="https://zongzi.lovetime.top/juejin/girlfriend/wink.gif" />
-      </div>
+      </div> -->
       <p v-for="(text, index) in exhibitionText" :key="index">
-        {{ text }}<um>💕</um>
+        {{ text }}<span>💕</span>
       </p>
     </div>
     <div class="pray" v-show="!isDecisionShow" @click="onPray">
@@ -29,28 +29,25 @@
         />
         <p>太好了，O(∩_∩)O哈哈~</p>
         <p>
-          {{ agreeText }}<um class="agree-cursor" style="color: #f44336">❤</um>
+          {{ agreeText
+          }}<span class="agree-cursor" style="color: #f44336">❤</span>
         </p>
       </div>
     </div>
     <div class="petal-box">
-      <!-- <transition-group name="petal" :move-class="false" :css="false" @enter="enterHandler" @leave="leaveHandler">
-        
-      </transition-group> -->
-      <img
-          v-for="petal in petalList"
-          :key="petal.id"
-          :id="petal.id"
-          class="petal"
-          :src="petal.url"
-          :style="petal.style"
-        />
+      <WePetal
+        v-for="petal in petalList"
+        :key="petal.id"
+        :petal="petal"
+        @remove="removeHandler"
+      />
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref } from "vue";
 import gsap from "gsap";
+import WePetal from "@/components/WePetal.vue";
 
 import { customAlphabet } from "nanoid";
 const nanoid = customAlphabet("abcdefghijklmn", 6);
@@ -125,15 +122,18 @@ getRandomPetal();
 const petalList = ref([]);
 const visualWidth = window.innerWidth;
 const visualHeight = window.innerHeight;
+console.log(visualWidth, visualHeight);
 const createPetalBox = () => {
   const currentPetal = petalImgs[Math.floor(Math.random() * 8)];
-  const petalLeft = Math.random() + visualWidth - 100;
+  const petalLeft = Math.random() * visualWidth;
   const randomOpacity = Math.random();
   const petalOpacity =
     randomOpacity < 0.5 ? randomOpacity + 0.5 : randomOpacity;
   const petalEndLeft = petalLeft - 100 + Math.random() * 500;
-  const petalEndTop = visualHeight - 40;
-  const duration = visualHeight * 10 + Math.random() * 5000;
+  const petalEndTop = visualHeight + 40;
+  const duration = Math.floor(
+    (visualHeight * 10 + Math.random() * 5000) / 1000
+  );
   const currentStyle = {
     left: petalLeft,
     opacity: petalOpacity,
@@ -145,64 +145,21 @@ const createPetalBox = () => {
     end: {
       duration,
       left: petalEndLeft,
-      top: petalEndTop
-    }
+      top: petalEndTop,
+    },
   };
   petalList.value.push(petal);
-  // gsap.to(`#${petal.id}`, {
-  //   duration,
-  //   x: petalEndLeft,
-  //   y: petalEndTop,
-  //   opacity: 0.7
-  // })
 };
-const enterHandler = (el, done) => {
-  console.log(el);
-
-  gsap.to(el, {
-    left: 10,
-    top: 40,
-    opacity: 1,
-    onComplete: done(),
-  });
-};
-const leaveHandler = (el, done) => {
-  console.log("leave");
-  console.log(el);
-
-  gsap.to(el, {
-    duration: 1,
-    left: 600,
-    top: 1000,
-    opacity: 0,
-    onComplete: done(),
-  });
+const removeHandler = (id) => {
+  petalList.value.splice(
+    petalList.value.findIndex((petal) => petal.id === id),
+    1
+  );
 };
 const petalHandler = () => {
   setInterval(createPetalBox, 500);
 };
 petalHandler();
-
-onMounted(() => {
-  // petalList.value.map(petal=> {
-  //   gsap.to(`#${petal.id}`, {
-  //     ...petal.end
-  //   })
-  // })
-});
-watch(() => petalList.value, (newValue) => {
-  console.log('petalList');
-  console.log(newValue);
-  newValue.map(petal=> {
-    console.log(petal.id);
-    gsap.to(`#${petal.id}`, {
-      ...petal.end
-    })
-  })
-}, {
-  immediate: true,
-  deep: true
-})
 </script>
 
 <style lang="scss">
@@ -340,13 +297,6 @@ img {
   }
 }
 .petal {
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  top: -40px;
-  left: 0;
-  opacity: 1;
-  z-index: 9999;
   &-box {
     width: 100%;
     height: 100%;

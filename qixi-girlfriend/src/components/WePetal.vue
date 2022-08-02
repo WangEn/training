@@ -3,7 +3,9 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted } from "vue";
+import gsap from "gsap";
+
 const props = defineProps({
   petal: {
     type: Object,
@@ -12,9 +14,18 @@ const props = defineProps({
     },
   },
 });
+const emit = defineEmits(['remove'])
 onMounted(() => {
-
-})
+  const { id, end } = props.petal;
+  console.log(end);
+  gsap.to(`#${id}`, {
+    ...end,
+    onComplete: () => {
+      console.log(`${id} gsap onComplete.`);
+      emit('remove', id)
+    }
+  });
+});
 </script>
 
 <style lang="scss" scoped>
