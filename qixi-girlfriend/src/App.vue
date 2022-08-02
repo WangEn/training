@@ -104,19 +104,28 @@ const getResourceUrl = (name, ext = "png") => {
   // juejin url
   // exp: https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_1.png
   // return `https://zongzi.lovetime.top/juejin/girlfriend/${name}.${ext}`
-
   return new URL(`./assets/${name}.${ext}`, import.meta.url).href;
 };
 const petalImgs = [
-  "petal/icon_petal_1",
-  "petal/icon_petal_2",
-  "petal/icon_petal_3",
-  "petal/icon_petal_4",
-  "petal/icon_petal_5",
-  "petal/icon_petal_6",
-  "petal/icon_petal_7",
-  "petal/icon_petal_8",
+  "icon_petal_1",
+  "icon_petal_2",
+  "icon_petal_3",
+  "icon_petal_4",
+  "icon_petal_5",
+  "icon_petal_6",
+  "icon_petal_7",
+  "icon_petal_8",
 ];
+// const petalImgs = [
+//   getResourceUrl('icon_petal_1'),
+//   getResourceUrl('icon_petal_2'),
+//   getResourceUrl('icon_petal_3'),
+//   getResourceUrl('icon_petal_4'),
+//   getResourceUrl('icon_petal_5'),
+//   getResourceUrl('icon_petal_6'),
+//   getResourceUrl('icon_petal_7'),
+//   getResourceUrl('icon_petal_8'),
+// ];
 const winkImg = getResourceUrl("wink", "gif");
 const bgImg = getResourceUrl("bg", "jpg");
 const kelianImg = getResourceUrl("emoji_kelian", "jpg");
@@ -128,6 +137,7 @@ const visualHeight = window.innerHeight;
 console.log(visualWidth, visualHeight);
 const createPetalBox = () => {
   const currentPetal = getResourceUrl(petalImgs[Math.floor(Math.random() * 8)]);
+  // const currentPetal = petalImgs[Math.floor(Math.random() * 8)];
   const petalLeft = Math.random() * visualWidth;
   const randomOpacity = Math.random();
   const petalOpacity =
