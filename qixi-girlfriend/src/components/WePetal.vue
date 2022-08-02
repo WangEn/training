@@ -17,11 +17,11 @@ const props = defineProps({
 const emit = defineEmits(['remove'])
 onMounted(() => {
   const { id, end } = props.petal;
-  console.log(end);
+  // console.log(end);
   gsap.to(`#${id}`, {
     ...end,
     onComplete: () => {
-      console.log(`${id} gsap onComplete.`);
+      // console.log(`${id} gsap onComplete.`);
       emit('remove', id)
     }
   });
@@ -36,6 +36,6 @@ onMounted(() => {
   top: -40px;
   left: 0;
   opacity: 1;
-  z-index: 9999;
+  z-index: 99;
 }
 </style>

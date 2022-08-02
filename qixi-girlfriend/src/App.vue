@@ -1,37 +1,37 @@
 <template>
   <div class="container">
-    <div class="express">
-      <!-- <div class="heart-box"></div> -->
-      <!-- <h1>{{ title }}<span>💕</span></h1> -->
-      <!-- <div class="wink">
-        <img src="https://zongzi.lovetime.top/juejin/girlfriend/wink.gif" />
-      </div> -->
-      <p v-for="(text, index) in exhibitionText" :key="index">
-        {{ text }}<span>💕</span>
-      </p>
-    </div>
-    <div class="pray" v-show="!isDecisionShow" @click="onPray">
-      <img
-        src="https://zongzi.lovetime.top/juejin/girlfriend/emoji_kelian.jpg"
-      />
-      <p>请告诉我Yes!</p>
-      <span class="pray-close">×</span>
-    </div>
-
-    <div class="decision" v-show="isDecisionShow">
-      <div class="decision-btn refuse" @click="onRefuse">No<span>💔</span></div>
-      <div class="decision-btn" @click="onAgree">Yes<span>❤️</span></div>
-    </div>
-    <div class="agree-wrapper" v-show="isAgreeShow">
-      <div class="agree">
-        <img
-          src="https://zongzi.lovetime.top/juejin/girlfriend/emoji_bixin.jpg"
-        />
-        <p>太好了，O(∩_∩)O哈哈~</p>
-        <p>
-          {{ agreeText
-          }}<span class="agree-cursor" style="color: #f44336">❤</span>
+    <img class="bg" :src="bgImg" />
+    <div class="lover">
+      <div class="express">
+        <h1>{{ title }}<span>💕</span></h1>
+        <div class="wink">
+          <img :src="winkImg" />
+        </div>
+        <p v-for="(text, index) in exhibitionText" :key="index">
+          {{ text }}<span>💕</span>
         </p>
+      </div>
+      <div class="pray" v-show="!isDecisionShow" @click="onPray">
+        <img :src="kelianImg" />
+        <p>请告诉我Yes!</p>
+        <span class="pray-close">×</span>
+      </div>
+
+      <div class="decision" v-show="isDecisionShow">
+        <div class="decision-btn refuse" @click="onRefuse">
+          No<span>💔</span>
+        </div>
+        <div class="decision-btn" @click="onAgree">Yes<span>❤️</span></div>
+      </div>
+      <div class="agree-wrapper" v-show="isAgreeShow">
+        <div class="agree">
+          <img :src="bixinImg" />
+          <p>太好了，O(∩_∩)O哈哈~</p>
+          <p>
+            {{ agreeText
+            }}<span class="agree-cursor" style="color: #f44336">❤</span>
+          </p>
+        </div>
       </div>
     </div>
     <div class="petal-box">
@@ -45,8 +45,7 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
-import gsap from "gsap";
+import { ref, onMounted, onUnmounted } from "vue";
 import WePetal from "@/components/WePetal.vue";
 
 import { customAlphabet } from "nanoid";
@@ -101,30 +100,34 @@ const onTyped = () => {
 };
 
 // petal
-const getResourceUrl = (name) => {
-  return new URL(`./assets/petal/${name}.png`, import.meta.url).href;
+const getResourceUrl = (name, ext = "png") => {
+  // juejin url
+  // exp: https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_1.png
+  // return `https://zongzi.lovetime.top/juejin/girlfriend/${name}.${ext}`
+
+  return new URL(`./assets/${name}.${ext}`, import.meta.url).href;
 };
 const petalImgs = [
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_1.png",
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_2.png",
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_3.png",
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_4.png",
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_5.png",
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_6.png",
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_7.png",
-  "https://zongzi.lovetime.top/juejin/girlfriend/petal/icon_petal_8.png",
+  "petal/icon_petal_1",
+  "petal/icon_petal_2",
+  "petal/icon_petal_3",
+  "petal/icon_petal_4",
+  "petal/icon_petal_5",
+  "petal/icon_petal_6",
+  "petal/icon_petal_7",
+  "petal/icon_petal_8",
 ];
-const randomPetal = ref("");
-const getRandomPetal = () => {
-  randomPetal.value = getResourceUrl("icon_petal_1");
-};
-getRandomPetal();
+const winkImg = getResourceUrl("wink", "gif");
+const bgImg = getResourceUrl("bg", "jpg");
+const kelianImg = getResourceUrl("emoji_kelian", "jpg");
+const bixinImg = getResourceUrl("emoji_bixin", "jpg");
+
 const petalList = ref([]);
 const visualWidth = window.innerWidth;
 const visualHeight = window.innerHeight;
 console.log(visualWidth, visualHeight);
 const createPetalBox = () => {
-  const currentPetal = petalImgs[Math.floor(Math.random() * 8)];
+  const currentPetal = getResourceUrl(petalImgs[Math.floor(Math.random() * 8)]);
   const petalLeft = Math.random() * visualWidth;
   const randomOpacity = Math.random();
   const petalOpacity =
@@ -156,10 +159,18 @@ const removeHandler = (id) => {
     1
   );
 };
+const petalTimer = ref(null);
 const petalHandler = () => {
-  setInterval(createPetalBox, 500);
+  petalTimer.value = setInterval(createPetalBox, 500);
 };
-petalHandler();
+
+onMounted(() => {
+  petalHandler();
+});
+
+onUnmounted(() => {
+  clearInterval(petalTimer);
+});
 </script>
 
 <style lang="scss">
@@ -178,13 +189,20 @@ img {
 
 .container {
   margin: 0 auto;
-  padding: 16px;
   max-width: 100%;
   width: 520px;
   height: 100vh;
-  background: url("https://zongzi.lovetime.top/juejin/girlfriend/bg.jpg")
-    no-repeat;
   box-sizing: border-box;
+  position: relative;
+}
+
+.bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  filter: blur(6px);
 }
 
 .express {
@@ -211,6 +229,7 @@ img {
   margin: 0 auto;
   padding: 16px 32px;
   width: 400px;
+  max-width: 90%;
   border-radius: 4px;
   background-color: #f7f7f7;
   box-sizing: border-box;
@@ -288,9 +307,7 @@ img {
         -moz-filter: grayscale(100%);
         -ms-filter: grayscale(100%);
         -o-filter: grayscale(100%);
-
         filter: grayscale(100%);
-
         filter: gray;
       }
     }
@@ -304,46 +321,18 @@ img {
     top: 0;
     left: 0;
     overflow: hidden;
+    z-index: 1;
   }
 }
-
-.heart-box {
-  width: 0.5rem;
-  height: 0.5rem;
-  background: radial-gradient(red 0.05rem, transparent 0.05rem) no-repeat 0.1rem
-      0.1rem/0.1rem 0.1rem,
-    radial-gradient(red 0.05rem, transparent 0.05rem) no-repeat 0.15rem 0.1rem/0.1rem
-      0.1rem,
-    linear-gradient(to bottom left, red 0.05rem, transparent 0.05rem) no-repeat
-      0.8rem 0.17rem/0.1rem 0.1rem,
-    linear-gradient(to bottom right, red 0.05rem, transparent 0.05rem) no-repeat
-      0.18rem 0.17rem/0.1rem 0.1rem;
-  // animation: heart 1s infinite 1s linear;
-}
-
-@keyframes heart {
-  0% {
-    transform: scale(0.8);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes wind {
-  0% {
-    bottom: 100%;
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(-90deg);
-    bottom: -10%;
-  }
-}
-//可添加不同速度
-.speed1 {
+.lover {
+  padding: 16px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   position: absolute;
-  animation: wind 5s linear;
+  left: 0;
+  top: 0;
+  z-index: 9;
+  overflow-y: auto;
 }
 </style>
