@@ -30,9 +30,10 @@ scene.add(mesh)
 
 // Sizes
 const sizes = {
-  width: 800,
-  height: 600
+  width: window.innerWidth,
+  height: window.innerHeight
 }
+
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
@@ -55,6 +56,31 @@ const renderer = new THREE.WebGLRenderer({
 
 renderer.setSize(sizes.width, sizes.height)
 
+
+window.addEventListener('resize', () => {
+  console.log('window has been resized');
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
+
+  camera.aspect = sizes.width / sizes.height
+  // 更改了像aspect这样的相机属性时，还需要使用camera.Updatejectionmatrix()来更新投影矩阵
+  camera.updateProjectionMatrix()
+  // update renderer size
+  renderer.setSize(sizes.width, sizes.height)
+  // set renderer 像素比
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+})
+
+// 双击 全屏
+window.addEventListener('dblclick', () => {
+  console.log('double click.');
+  if(!document.fullscreenElement) {
+    canvas.requestFullscreen()
+  } else {
+    document.exitFullscreen()
+  }
+})
 
 // length()一个向量的长度
 // console.log(mesh.position.length());
@@ -107,7 +133,7 @@ window.addEventListener('mousemove', event => {
   cursor.x = event.clientX / sizes.width - 0.5
   cursor.y = - (event.clientY / sizes.height - 0.5)
   // console.log(event.clientX, event.clientY);
-  console.log(cursor.x, cursor.y);
+  // console.log(cursor.x, cursor.y);
 })
 
 renderer.render(scene, camera)
