@@ -97,6 +97,19 @@ const cube3 = new THREE.Mesh(
 cube3.position.x = 1.5
 group.add(cube3)
 
+// Cursor 鼠标
+const cursor = {
+  x: 0,
+  y: 0
+}
+window.addEventListener('mousemove', event => {
+  // 调整鼠标坐标值，使之相对画布中心变化
+  cursor.x = event.clientX / sizes.width - 0.5
+  cursor.y = - (event.clientY / sizes.height - 0.5)
+  // console.log(event.clientX, event.clientY);
+  console.log(cursor.x, cursor.y);
+})
+
 renderer.render(scene, camera)
 
 // Animate
@@ -109,30 +122,49 @@ renderer.render(scene, camera)
 //   window.requestAnimationFrame(tick)
 // }
 
+// Controls 环轨控制器
+const controls = new THREE.OrbitControls(camera, canvas)
+controls.target.y = 2
+controls.enableDamping = true
+
+
 // Clock 内置方法：处理时间的计算
 // CLock().getElapsedTime() 创建时钟以来过去了多少秒
-// const clock = new THREE.Clock()
+const clock = new THREE.Clock()
 
-// const tick = () => {
-//   const elapsedTime = clock.getElapsedTime()
-//   // mesh.rotation.y = elapsedTime
-//   // 三角函数优化动效
-//   mesh.rotation.x = Math.cos(elapsedTime)
-//   mesh.rotation.y = Math.sin(elapsedTime)
-//   renderer.render(scene, camera)
-//   window.requestAnimationFrame(tick)
-
-//   // 改变相机坐标，使之持续lookAt看向立方体mesh
-//   camera.position.x = Math.cos(elapsedTime)
-//   camera.position.y = Math.sin(elapsedTime)
-//   camera.lookAt(mesh.position)
-// }
-
-// GSAP
-gsap.to(mesh.rotation, { duration: 1, y: 45*(Math.PI/180) })
 const tick = () => {
+  const elapsedTime = clock.getElapsedTime()
+  // mesh.rotation.y = elapsedTime
+  // 三角函数优化动效
+  mesh.rotation.x = Math.cos(elapsedTime)
+  mesh.rotation.y = Math.sin(elapsedTime)
   renderer.render(scene, camera)
   window.requestAnimationFrame(tick)
+
+  // 改变相机坐标，使之持续lookAt看向立方体mesh
+  // camera.position.x = Math.cos(elapsedTime)
+  // camera.position.y = Math.sin(elapsedTime)
+
+  // camera.position.x = cursor.x
+  // camera.position.y = cursor.y
+  
+  // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 2
+  // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 2
+  // camera.position.y = cursor.y * 3
+  // camera.lookAt(mesh.position)
+
+  // Update controls
+  controls.update()
 }
+
+// GSAP
+// gsap.to(mesh.rotation, { duration: 1, y: 45*(Math.PI/180) })
+// const tick = () => {
+
+
+//   renderer.render(scene, camera)
+//   window.requestAnimationFrame(tick)
+// }
+
 
 tick()
