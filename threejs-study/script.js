@@ -14,13 +14,13 @@ const mesh = new THREE.Mesh(geometry, material)
 // mesh.position.z = 1
 
 // 缩放
-mesh.scale.x = 2
-mesh.scale.y = 0.25
-mesh.scale.z = 0.5
+// mesh.scale.x = 2
+// mesh.scale.y = 0.25
+// mesh.scale.z = 0.5
 
 // 旋转 rotation 当你旋转x轴时，也会改变其他轴的方向
-mesh.rotation.x = Math.PI * 0.25
-mesh.rotation.y = Math.PI * 0.25
+// mesh.rotation.x = Math.PI * 0.25
+// mesh.rotation.y = Math.PI * 0.25
 
 // 旋转 quaternion 四元数
 
@@ -37,7 +37,7 @@ const sizes = {
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 // 采用右手笛卡尔坐标系，y轴向上，z轴向后，x轴向右
-camera.position.z = 3
+camera.position.z = 1
 
 // lookAt 让指定的3D物体自动旋转朝向一个坐标
 // camera.lookAt(new THREE.Vector3(0, -1, 0))
@@ -74,7 +74,7 @@ scene.add(axesHelper)
 const group = new THREE.Group()
 group.scale.y = 2
 group.rotation.y = 0.2
-scene.add(group)
+// scene.add(group)
 
 const cube1 = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
@@ -98,3 +98,41 @@ cube3.position.x = 1.5
 group.add(cube3)
 
 renderer.render(scene, camera)
+
+// Animate
+// const time = new Date().getTime()
+// const tick = () => {
+//   const elapsedTime = (new Date().getTime() - time) / 1000
+//   mesh.rotation.y = elapsedTime
+//   // mesh.rotation.y += 0.01
+//   renderer.render(scene, camera)
+//   window.requestAnimationFrame(tick)
+// }
+
+// Clock 内置方法：处理时间的计算
+// CLock().getElapsedTime() 创建时钟以来过去了多少秒
+// const clock = new THREE.Clock()
+
+// const tick = () => {
+//   const elapsedTime = clock.getElapsedTime()
+//   // mesh.rotation.y = elapsedTime
+//   // 三角函数优化动效
+//   mesh.rotation.x = Math.cos(elapsedTime)
+//   mesh.rotation.y = Math.sin(elapsedTime)
+//   renderer.render(scene, camera)
+//   window.requestAnimationFrame(tick)
+
+//   // 改变相机坐标，使之持续lookAt看向立方体mesh
+//   camera.position.x = Math.cos(elapsedTime)
+//   camera.position.y = Math.sin(elapsedTime)
+//   camera.lookAt(mesh.position)
+// }
+
+// GSAP
+gsap.to(mesh.rotation, { duration: 1, y: 45*(Math.PI/180) })
+const tick = () => {
+  renderer.render(scene, camera)
+  window.requestAnimationFrame(tick)
+}
+
+tick()
